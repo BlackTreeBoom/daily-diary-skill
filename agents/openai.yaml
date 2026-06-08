@@ -1,0 +1,7 @@
+interface:
+  display_name: "Daily Diary"
+  short_description: "Turn daily inputs into a verified English diary"
+  icon_small: "./assets/icon-small.svg"
+  icon_large: "./assets/default-cover.svg"
+  brand_color: "#14B8A6"
+  default_prompt: "Use $daily-diary to turn today's notes, files, and audio into a polished English diary entry, confirm the verification scope before writing, and publish it to GitHub."

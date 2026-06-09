@@ -19,8 +19,9 @@ Use this checklist when verifying a diary.
 
 ## How to Correct
 
-- If a factual statement is wrong, fix it in the diary and mention the correction in verification notes.
-- If the user was unsure but mostly correct, write a confident but modest version.
+- Do not silently replace what the writer said, believed, or felt in the diary voice.
+- If a factual statement is wrong, preserve the writer's original belief when it matters to the diary, then mention the correction in verification notes.
+- If the user was unsure but mostly correct, preserve the user's uncertainty unless the user asked for a more certain factual rewrite.
 - If the evidence is unresolved, keep the uncertainty visible.
 - Do not turn the diary into a report; facts support the narrative.
 
@@ -30,4 +31,4 @@ Use the target date, location, and timezone. Include a human-friendly summary, t
 
 ## Citations
 
-The final diary may keep citations out of the prose, but the final response should include important sources used. For GitHub entries, include a concise verification section only when it improves trust.
+The final diary may keep citations out of the prose, but the final response should include important sources used. In the local Markdown file, include a concise verification section only when it improves trust or documents a meaningful correction.

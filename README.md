@@ -16,6 +16,8 @@ Daily Diary is a Codex skill for creating a local diary file from messy daily in
 
 It accepts material such as text dumps, local files, folders, screenshots, audio/video notes, chat exports, PDFs, documents, and mixed fragments. It helps Codex collect those sources, arrange them into a chronological timeline, verify uncertain facts, enrich the day with date and weather context, and save the final diary as a local Markdown file.
 
+The writer's voice is the source of truth. The skill must not sanitize, balance, moralize, or replace the writer's thoughts, wording, biases, emotions, or point of view. It only organizes the diary and checks objective facts.
+
 The output is intentionally simple:
 
 ```text
@@ -34,6 +36,7 @@ No GitHub publishing. No cover image. No generated asset bundle. Just one local 
 | Primary language | English |
 | Additional languages | Optional, confirmed before writing |
 | Fact checking | Weather, current events, names, places, and uncertain claims |
+| Voice fidelity | Preserve the writer's original thoughts, wording, biases, and emotions |
 | Publishing | None |
 | Cover image | None |
 
@@ -45,9 +48,10 @@ flowchart LR
   B --> C["Transcribe or OCR if needed"]
   C --> D["Build timeline"]
   D --> E["Confirm scope"]
-  E --> F["Research and verify"]
-  F --> G["Draft diary data"]
-  G --> H["Render YYYY-MM-DD.md locally"]
+  E --> F["Preserve writer's voice"]
+  F --> G["Research and verify"]
+  G --> H["Draft diary data"]
+  H --> I["Render YYYY-MM-DD.md locally"]
 ```
 
 Before writing the diary, the skill confirms:
@@ -59,6 +63,13 @@ Before writing the diary, the skill confirms:
 - source scope
 - uncertain claims to verify
 - local output path
+
+While writing, the skill preserves:
+
+- the writer's stated beliefs and opinions
+- hedges like "I think", "maybe", "好像", and "不确定"
+- emotional tone, bias, contradiction, and uncertainty
+- first-person perspective when present in the source
 
 ## Example Prompts
 
@@ -108,7 +119,7 @@ The day arrived in fragments, but by the end it had a shape...
 
 ## Verification Notes
 
-- **verified** Weather: Checked the target date and location.
+- **corrected** "I thought the meeting was with the Series B founder": the checked sources show the company had announced a Series A, not a Series B. The diary keeps the original belief because it shaped the day.
 ```
 
 ## Included Tools
@@ -127,6 +138,7 @@ daily-diary/
   references/
     output-schema.md
     research-checklist.md
+    writing-fidelity.md
   scripts/
     collect_inputs.py
     render_diary.py
@@ -166,6 +178,7 @@ Daily Diary is local-first:
 - The skill does not publish, commit, push, or sync diary entries.
 - The user chooses the local output folder.
 - Private names, locations, screenshots, and sensitive notes can be anonymized before writing.
+- Subjective thoughts and biases are preserved unless the user explicitly asks to anonymize or soften them.
 
 ## License
 

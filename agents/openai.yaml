@@ -1,5 +1,5 @@
 interface:
   display_name: "Daily Diary"
-  short_description: "Save daily inputs as a verified local Markdown diary"
+  short_description: "Save daily inputs as a voice-faithful Markdown diary"
   brand_color: "#14B8A6"
   default_prompt: "Use $daily-diary to turn today's notes, files, and audio into a polished English diary, confirm the verification scope before writing, and save it locally as YYYY-MM-DD.md."

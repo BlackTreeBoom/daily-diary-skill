@@ -53,7 +53,8 @@ Create `diary_data.json` before rendering. Keep fields concise and factual.
     {
       "claim": "Original uncertain claim",
       "status": "corrected / verified / unresolved",
-      "result": "What was found",
+      "original_wording": "Optional exact wording from the writer",
+      "result": "What was found without rewriting the writer's subjective voice",
       "sources": ["https://example.com"]
     }
   ],
@@ -80,8 +81,9 @@ Markdown render order:
 
 Tone:
 
-- English: polished diary prose, not a literal translation.
-- Chinese, when requested: natural, literary but not ornate; first person when source material is first person.
-- Other languages, when requested: write naturally for that language instead of translating sentence-by-sentence.
+- Preserve the writer's original thoughts, wording, biases, emotions, and point of view.
+- English: readable diary prose, not a literal translation, but never more neutral or morally polished than the source.
+- Chinese, when requested: natural, literary but not ornate; first person when source material is first person; preserve the same stance and bias.
+- Other languages, when requested: write naturally for that language instead of translating sentence-by-sentence, while preserving the writer's stance.
 - Keep private and emotional details intact unless the user asks for anonymization.
 - Do not fabricate sensory detail, conversations, or motives.

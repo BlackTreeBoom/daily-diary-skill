@@ -11,6 +11,7 @@ Create `diary_data.json` before rendering. Keep fields concise and factual.
   "location": "City, Region",
   "weather": {
     "summary": "Cloudy, light rain in the evening",
+    "short": "晴",
     "temperature": "22-28°C",
     "source": "Weather provider or URL"
   },
@@ -18,6 +19,13 @@ Create `diary_data.json` before rendering. Keep fields concise and factual.
   "tags": ["work", "family", "learning"],
   "primary_language": "en",
   "language_order": ["en"],
+  "style": {
+    "heading": "20260603周日晴",
+    "target_length": "300-400 characters for Chinese or 300-400 words for English",
+    "max_length": "800-1000 unless user requests verbatim preservation",
+    "paragraphs": "3-4 by default",
+    "include_metadata_sections": false
+  },
   "source_summary": [
     "3 voice notes",
     "2 screenshots",
@@ -70,14 +78,20 @@ Create `diary_data.json` before rendering. Keep fields concise and factual.
 
 Markdown render order:
 
-1. YAML frontmatter.
-2. Title and daily metadata.
-3. Source summary.
-4. Timeline.
-5. English diary.
-6. Optional additional language sections, in `language_order`.
-7. Verification notes.
-8. Attachments.
+1. Compact heading, usually `YYYYMMDD周X天气`.
+2. Diary body directly after the heading.
+3. Optional additional language sections only when requested.
+4. Brief verification notes only when factual corrections or unresolved checks materially matter.
+
+Do not include YAML frontmatter, source summaries, metadata blocks, attachment lists, or timeline sections by default. Those details are working notes unless the user asks to include them.
+
+Length:
+
+- Default target: 300-400 characters for Chinese, or 300-400 words for English.
+- Default maximum: 800-1000 characters/words even when inputs are large.
+- If the source is thousands of characters/words or many files, confirm whether to compress before writing.
+- Preserve all source content only when the user explicitly asks for verbatim or exhaustive retention.
+- Default paragraph count: 3-4 paragraphs. Use more only for large confirmed outputs.
 
 Tone:
 

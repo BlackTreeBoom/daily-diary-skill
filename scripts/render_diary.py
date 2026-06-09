@@ -6,27 +6,13 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 
-def yaml_scalar(value: Any) -> str:
-    if value is None:
-        return '""'
-    text = str(value).replace('"', '\\"')
-    return f'"{text}"'
-
-
-def yaml_list(values: list[Any]) -> str:
-    return "[" + ", ".join(yaml_scalar(value) for value in values) + "]"
-
-
 def line_join(lines: list[str]) -> str:
     return "\n".join(line.rstrip() for line in lines).strip() + "\n"
-
-
-def bullet_list(values: list[str]) -> list[str]:
-    return [f"- {value}" for value in values if value]
 
 
 def language_heading(language: str) -> str:
@@ -56,88 +42,78 @@ def ordered_languages(data: dict[str, Any], diary: dict[str, Any]) -> list[str]:
     return ordered
 
 
-def render(data: dict[str, Any]) -> str:
-    title = data.get("title") or f"Diary {data.get('date', '')}".strip()
-    date = data.get("date", "")
+def compact_heading(data: dict[str, Any]) -> str:
+    style = data.get("style") or {}
+    if style.get("heading"):
+        return str(style["heading"])
+
+    date = str(data.get("date") or dt.date.today().isoformat())
+    date_digits = re.sub(r"\D", "", date)
+    if len(date_digits) != 8:
+        date_digits = dt.date.today().strftime("%Y%m%d")
+
+    weekday = str(data.get("weekday") or "").strip()
+    weekday_map = {
+        "monday": "周一",
+        "mon": "周一",
+        "tuesday": "周二",
+        "tue": "周二",
+        "wednesday": "周三",
+        "wed": "周三",
+        "thursday": "周四",
+        "thu": "周四",
+        "friday": "周五",
+        "fri": "周五",
+        "saturday": "周六",
+        "sat": "周六",
+        "sunday": "周日",
+        "sun": "周日",
+    }
+    if not weekday.startswith("周"):
+        weekday = weekday_map.get(weekday.lower(), "")
+    if not weekday:
+        try:
+            parsed = dt.date.fromisoformat(f"{date_digits[:4]}-{date_digits[4:6]}-{date_digits[6:]}")
+            weekday = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"][parsed.weekday()]
+        except ValueError:
+            weekday = ""
+
     weather = data.get("weather") or {}
+    weather_text = str(weather.get("short") or weather.get("summary") or "").strip()
+    weather_text = re.split(r"[,，;；、\s]", weather_text, maxsplit=1)[0]
+    return f"{date_digits}{weekday}{weather_text}".strip()
+
+
+def section_parts(section: dict[str, Any]) -> list[str]:
+    parts: list[str] = []
+    for part in [section.get("opening"), *(section.get("body") or []), section.get("closing")]:
+        if part:
+            parts.append(str(part).strip())
+    return [part for part in parts if part]
+
+
+def render(data: dict[str, Any]) -> str:
     diary = data.get("diary") or {}
 
-    frontmatter = [
-        "---",
-        f"title: {yaml_scalar(title)}",
-        f"date: {yaml_scalar(date)}",
-        f"weekday: {yaml_scalar(data.get('weekday', ''))}",
-        f"timezone: {yaml_scalar(data.get('timezone', ''))}",
-        f"location: {yaml_scalar(data.get('location', ''))}",
-        f"weather: {yaml_scalar(weather.get('summary', ''))}",
-        f"temperature: {yaml_scalar(weather.get('temperature', ''))}",
-        f"mood: {yaml_scalar(data.get('mood', ''))}",
-        f"tags: {yaml_list(data.get('tags') or [])}",
-        f"generated_at: {yaml_scalar(dt.datetime.now().astimezone().isoformat(timespec='seconds'))}",
-        "---",
-        "",
-    ]
+    lines: list[str] = [compact_heading(data), ""]
 
-    lines: list[str] = frontmatter
-    lines.extend([f"# {title}", ""])
-
-    meta_pairs = [
-        ("日期 / Date", date),
-        ("星期 / Weekday", data.get("weekday", "")),
-        ("地点 / Location", data.get("location", "")),
-        ("天气 / Weather", f"{weather.get('summary', '')} {weather.get('temperature', '')}".strip()),
-        ("心情 / Mood", data.get("mood", "")),
-    ]
-    lines.extend([f"{label}: {value}" for label, value in meta_pairs if value])
-    lines.append("")
-
-    source_summary = data.get("source_summary") or []
-    if source_summary:
-        lines.extend(["## 素材概览 / Source Summary", ""])
-        lines.extend(bullet_list(source_summary))
-        lines.append("")
-
-    timeline = data.get("timeline") or []
-    if timeline:
-        lines.extend(["## 时间线 / Timeline", ""])
-        for item in timeline:
-            time = item.get("time") or "时间不详"
-            heading = item.get("title") or "Untitled"
-            details = item.get("details") or ""
-            source = item.get("source")
-            suffix = f" _Source: {source}_" if source else ""
-            lines.append(f"- **{time}** {heading}: {details}{suffix}")
-        lines.append("")
-
-    for language in ordered_languages(data, diary):
+    languages = ordered_languages(data, diary)
+    for index, language in enumerate(languages):
         section = diary.get(language) or {}
-        lines.extend([f"## {language_heading(language)}", ""])
-        for part in [section.get("opening"), *(section.get("body") or []), section.get("closing")]:
-            if part:
-                lines.extend([part, ""])
+        if index > 0:
+            lines.extend([f"## {language_heading(language)}", ""])
+        for part in section_parts(section):
+            lines.extend([part, ""])
 
     fact_checks = data.get("fact_checks") or []
-    if fact_checks:
-        lines.extend(["## 校对与补全 / Verification Notes", ""])
-        for item in fact_checks:
+    visible_checks = [item for item in fact_checks if item.get("include_in_diary", True)]
+    if visible_checks:
+        lines.extend(["## Verification Notes", ""])
+        for item in visible_checks:
             claim = item.get("claim") or "Claim"
             status = item.get("status") or "checked"
             result = item.get("result") or ""
-            sources = item.get("sources") or []
-            source_text = ""
-            if sources:
-                source_text = " Sources: " + ", ".join(str(source) for source in sources)
-            lines.append(f"- **{status}** {claim}: {result}{source_text}")
-        lines.append("")
-
-    attachments = data.get("attachments") or []
-    if attachments:
-        lines.extend(["## 附件 / Attachments", ""])
-        for item in attachments:
-            label = item.get("label") or item.get("path") or "Attachment"
-            path = item.get("path") or ""
-            type_name = item.get("type") or "file"
-            lines.append(f"- [{type_name}] {label}: `{path}`")
+            lines.append(f"- **{status}** {claim}: {result}")
         lines.append("")
 
     return line_join(lines)

@@ -10,7 +10,7 @@
 
 <p align="center">
   <img alt="Default language" src="https://img.shields.io/badge/default-English-0f766e">
-  <img alt="Output" src="https://img.shields.io/badge/output-YYYY--MM--DD.md-2563eb">
+  <img alt="Output" src="https://img.shields.io/badge/output-YYYYMMDD%E5%91%A8X%E5%A4%A9%E6%B0%94%20%2B%20diary-2563eb">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-f59e0b">
 </p>
 
@@ -25,6 +25,14 @@ The writer's voice is the source of truth. The skill must not sanitize, balance,
 The output is intentionally simple:
 
 ```text
+20260603周日晴
+
+Diary body...
+```
+
+The file itself is still named:
+
+```text
 YYYY-MM-DD.md
 ```
 
@@ -35,10 +43,14 @@ No GitHub publishing for diary entries. No diary cover image. No generated diary
 | Setting | Default |
 | --- | --- |
 | Output format | Markdown |
-| File name | `YYYY-MM-DD.md` |
+| First line | `YYYYMMDD周X天气`, for example `20260603周日晴` |
+| File name | `YYYY-MM-DD.md`, for example `2026-06-03.md` |
 | Output location | `./diary` unless the user chooses another local folder |
 | Primary language | English |
 | Additional languages | Optional, confirmed before writing |
+| Default length | About 300-400 characters/words |
+| Large input limit | Usually 800-1000 characters/words unless the user asks to keep everything |
+| Paragraphs | Usually 3-4 |
 | Fact checking | Weather, current events, names, places, and uncertain claims |
 | Voice fidelity | Preserve the writer's original thoughts, wording, biases, and emotions |
 | Publishing | None |
@@ -55,7 +67,7 @@ flowchart LR
   E --> F["Preserve writer's voice"]
   F --> G["Research and verify"]
   G --> H["Draft diary data"]
-  H --> I["Render YYYY-MM-DD.md locally"]
+  H --> I["Render compact diary locally"]
 ```
 
 Before writing the diary, the skill confirms:
@@ -67,6 +79,7 @@ Before writing the diary, the skill confirms:
 - source scope
 - uncertain claims to verify
 - local output path
+- target length and whether large inputs should be compressed
 
 While writing, the skill preserves:
 
@@ -92,34 +105,13 @@ Use $daily-diary to process these voice notes and screenshots. Default to Englis
 ## Example Output
 
 ```markdown
----
-title: "A Day Gathered"
-date: "2026-06-09"
-location: "Shanghai"
-weather: "Cloudy"
-tags: ["journal", "learning"]
----
+20260609周二阴
 
-# A Day Gathered
+The day arrived in fragments, but by the end it had a shape. In the morning I kept circling around the same thought, half certain and half doubtful, trying to remember whether the detail I had in mind was actually true.
 
-Date: 2026-06-09
-Location: Shanghai
-Weather: Cloudy
+By afternoon, the scattered notes started to line up. The useful part was not that everything became neat, but that the order of the day became visible. I could see what I had cared about, what I had misunderstood, and what still felt unresolved.
 
-## Source Summary
-
-- 3 voice notes
-- 2 screenshots
-- 1 text note
-
-## Timeline
-
-- **09:00** Morning note: Recorded a thought that needed checking.
-- **19:30** Evening walk: Noted the weather and mood.
-
-## English Diary
-
-The day arrived in fragments, but by the end it had a shape...
+At night I kept the diary short. I did not want to turn the day into a report. I only wanted to keep the texture of it: the uncertainty, the weather, the small decisions, and the way my own bias shaped what I noticed.
 
 ## Verification Notes
 
@@ -131,7 +123,7 @@ The day arrived in fragments, but by the end it had a shape...
 | Script | Purpose |
 | --- | --- |
 | `scripts/collect_inputs.py` | Scan files and folders, extract text where possible, and build a JSONL manifest. |
-| `scripts/render_diary.py` | Render `diary_data.json` into a local `YYYY-MM-DD.md` file. |
+| `scripts/render_diary.py` | Render `diary_data.json` into a compact local `YYYY-MM-DD.md` file. |
 
 ## Repository Layout
 

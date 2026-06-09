@@ -18,10 +18,6 @@ Create `diary_data.json` before rendering. Keep fields concise and factual.
   "tags": ["work", "family", "learning"],
   "primary_language": "en",
   "language_order": ["en"],
-  "cover": {
-    "path": "cover.svg",
-    "alt": "A concise description of the cover"
-  },
   "source_summary": [
     "3 voice notes",
     "2 screenshots",
@@ -74,14 +70,13 @@ Create `diary_data.json` before rendering. Keep fields concise and factual.
 Markdown render order:
 
 1. YAML frontmatter.
-2. Cover image.
-3. Title and daily metadata.
-4. Source summary.
-5. Timeline.
-6. English diary.
-7. Optional additional language sections, in `language_order`.
-8. Verification notes.
-9. Attachments.
+2. Title and daily metadata.
+3. Source summary.
+4. Timeline.
+5. English diary.
+6. Optional additional language sections, in `language_order`.
+7. Verification notes.
+8. Attachments.
 
 Tone:
 

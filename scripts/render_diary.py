@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a bilingual diary Markdown file from diary_data.json."""
+"""Render a local Markdown diary file from diary_data.json."""
 
 from __future__ import annotations
 
@@ -60,7 +60,6 @@ def render(data: dict[str, Any]) -> str:
     title = data.get("title") or f"Diary {data.get('date', '')}".strip()
     date = data.get("date", "")
     weather = data.get("weather") or {}
-    cover = data.get("cover") or {}
     diary = data.get("diary") or {}
 
     frontmatter = [
@@ -80,10 +79,6 @@ def render(data: dict[str, Any]) -> str:
     ]
 
     lines: list[str] = frontmatter
-    if cover.get("path"):
-        alt = cover.get("alt") or title
-        lines.extend([f"![{alt}]({cover['path']})", ""])
-
     lines.extend([f"# {title}", ""])
 
     meta_pairs = [
@@ -149,16 +144,19 @@ def render(data: dict[str, Any]) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Render a bilingual diary Markdown file.")
+    parser = argparse.ArgumentParser(description="Render a local Markdown diary file.")
     parser.add_argument("--data", required=True, type=Path, help="Input diary_data.json")
-    parser.add_argument("--out", required=True, type=Path, help="Output Markdown path")
+    parser.add_argument("--out", type=Path, help="Output Markdown path. Defaults to DIR/YYYY-MM-DD.md")
+    parser.add_argument("--dir", type=Path, default=Path("."), help="Output directory when --out is omitted")
     args = parser.parse_args()
 
     data = json.loads(args.data.read_text(encoding="utf-8"))
     markdown = render(data)
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(markdown, encoding="utf-8")
-    print(f"Wrote diary to {args.out}")
+    date = data.get("date") or dt.date.today().isoformat()
+    out = args.out or (args.dir / f"{date}.md")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(markdown, encoding="utf-8")
+    print(f"Wrote diary to {out}")
     return 0
 
 

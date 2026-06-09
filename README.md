@@ -1,108 +1,93 @@
-<p align="center">
-  <img src="assets/default-cover.svg" alt="Daily Diary cover" width="100%">
-</p>
-
 <h1 align="center">Daily Diary Skill</h1>
 
 <p align="center">
-  Turn scattered notes, files, screenshots, and voice memories into a verified, beautifully structured daily diary.
+  Turn scattered daily notes, files, screenshots, and voice memories into one verified local Markdown diary.
 </p>
 
 <p align="center">
-  <a href="https://github.com/BlackTreeBoom/daily-diary-skill"><img alt="GitHub repo" src="https://img.shields.io/badge/GitHub-daily--diary--skill-181717?logo=github"></a>
   <img alt="Default language" src="https://img.shields.io/badge/default-English-0f766e">
+  <img alt="Output" src="https://img.shields.io/badge/output-YYYY--MM--DD.md-2563eb">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-f59e0b">
 </p>
 
-## What It Is
+## What It Does
 
-Daily Diary is a Codex skill for turning raw daily inputs into a polished personal diary entry. It accepts messy material: text dumps, local files, folders, screenshots, audio/video notes, chat exports, PDFs, documents, and mixed fragments. It then helps an agent collect the sources, arrange them chronologically, verify uncertain claims, enrich the entry with date and weather context, generate a cover, and publish the final Markdown entry to GitHub.
+Daily Diary is a Codex skill for creating a local diary file from messy daily inputs.
 
-The default diary language is English. Additional languages, such as Chinese, can be selected before writing.
+It accepts material such as text dumps, local files, folders, screenshots, audio/video notes, chat exports, PDFs, documents, and mixed fragments. It helps Codex collect those sources, arrange them into a chronological timeline, verify uncertain facts, enrich the day with date and weather context, and save the final diary as a local Markdown file.
 
-## Why It Exists
+The output is intentionally simple:
 
-Most diary tools ask you to start from a blank page. Real days rarely arrive that cleanly. They arrive as voice notes, half-finished thoughts, screenshots, meeting fragments, calendar memories, and uncertain claims like "I think this happened today."
+```text
+YYYY-MM-DD.md
+```
 
-This skill is built for that mess.
+No GitHub publishing. No cover image. No generated asset bundle. Just one local `.md` diary file for the day.
 
-It gives Codex a repeatable workflow for turning a day's raw material into a diary that feels human, stays factual, and is easy to keep in a GitHub-backed archive.
+## Defaults
 
-## Highlights
-
-| Capability | What it does |
+| Setting | Default |
 | --- | --- |
-| Source collection | Scans files and folders, extracts text where possible, and builds a JSONL manifest. |
-| Audio and image awareness | Flags voice/video notes for transcription and screenshots/images for OCR. |
-| Timeline building | Orders events by timestamps, metadata, filenames, and narrative clues. |
-| Verification first | Searches weather, current events, names, places, and uncertain claims before writing. |
-| English by default | Produces polished English diary prose unless other languages are requested. |
-| Optional multilingual output | Adds Chinese or other language sections after pre-writing confirmation. |
-| Cover generation | Creates an attractive 16:9 cover from the day, weather, title, and mood. |
-| GitHub publishing | Copies entry assets, commits, and pushes to a diary repository. |
-
-## Installation
-
-Clone the skill into your Codex skills directory:
-
-```bash
-git clone https://github.com/BlackTreeBoom/daily-diary-skill \
-  ~/.codex/skills/daily-diary
-```
-
-Then invoke it from Codex with:
-
-```text
-Use $daily-diary to turn today's notes, files, and audio into a polished English diary entry.
-```
-
-## Example Prompts
-
-```text
-Use $daily-diary on ~/Downloads/today-notes and write an English diary for 2026-06-08.
-```
-
-```text
-Use $daily-diary to process these voice notes and screenshots. Default to English, but add a Chinese version after I confirm the timeline.
-```
-
-```text
-Use $daily-diary to write today's diary, verify anything I said I was unsure about, generate a cover, and publish it to my GitHub diary repo.
-```
+| Output format | Markdown |
+| File name | `YYYY-MM-DD.md` |
+| Output location | `./diary` unless the user chooses another local folder |
+| Primary language | English |
+| Additional languages | Optional, confirmed before writing |
+| Fact checking | Weather, current events, names, places, and uncertain claims |
+| Publishing | None |
+| Cover image | None |
 
 ## Workflow
 
 ```mermaid
 flowchart LR
-  A["Raw sources"] --> B["Collect manifest"]
-  B --> C["Transcribe / OCR"]
+  A["Raw daily inputs"] --> B["Collect source manifest"]
+  B --> C["Transcribe or OCR if needed"]
   C --> D["Build timeline"]
   D --> E["Confirm scope"]
   E --> F["Research and verify"]
   F --> G["Draft diary data"]
-  G --> H["Generate cover"]
-  H --> I["Render Markdown"]
-  I --> J["Commit and push"]
+  G --> H["Render YYYY-MM-DD.md locally"]
 ```
 
-## Output Shape
+Before writing the diary, the skill confirms:
 
-A generated diary entry is designed for GitHub, static sites, and long-term personal archives:
+- target date
+- timezone
+- output language or languages
+- weather location
+- source scope
+- uncertain claims to verify
+- local output path
+
+## Example Prompts
+
+```text
+Use $daily-diary to turn today's notes into an English diary and save it locally.
+```
+
+```text
+Use $daily-diary on ~/Downloads/today-notes for 2026-06-09. Save the Markdown file in ~/Documents/diary.
+```
+
+```text
+Use $daily-diary to process these voice notes and screenshots. Default to English, but add Chinese after I confirm the timeline.
+```
+
+## Example Output
 
 ```markdown
 ---
 title: "A Day Gathered"
-date: "2026-06-08"
+date: "2026-06-09"
 location: "Shanghai"
 weather: "Cloudy"
 tags: ["journal", "learning"]
 ---
 
-![Open diary cover](cover.svg)
-
 # A Day Gathered
 
-Date: 2026-06-08
+Date: 2026-06-09
 Location: Shanghai
 Weather: Cloudy
 
@@ -114,25 +99,24 @@ Weather: Cloudy
 
 ## Timeline
 
-- 09:00 Morning note...
+- **09:00** Morning note: Recorded a thought that needed checking.
+- **19:30** Evening walk: Noted the weather and mood.
 
 ## English Diary
 
-The day arrived in fragments...
+The day arrived in fragments, but by the end it had a shape...
 
 ## Verification Notes
 
-- verified: ...
+- **verified** Weather: Checked the target date and location.
 ```
 
 ## Included Tools
 
 | Script | Purpose |
 | --- | --- |
-| `scripts/collect_inputs.py` | Build a manifest from files and folders. |
-| `scripts/render_diary.py` | Render `diary_data.json` into Markdown. |
-| `scripts/make_cover_svg.py` | Generate a clean SVG cover. |
-| `scripts/publish_to_github.sh` | Copy, commit, and push diary files to a GitHub repo. |
+| `scripts/collect_inputs.py` | Scan files and folders, extract text where possible, and build a JSONL manifest. |
+| `scripts/render_diary.py` | Render `diary_data.json` into a local `YYYY-MM-DD.md` file. |
 
 ## Repository Layout
 
@@ -140,36 +124,48 @@ The day arrived in fragments...
 daily-diary/
   SKILL.md
   agents/openai.yaml
-  assets/
-    default-cover.svg
-    icon-small.svg
   references/
-    github-publishing.md
     output-schema.md
     research-checklist.md
   scripts/
     collect_inputs.py
-    make_cover_svg.py
-    publish_to_github.sh
     render_diary.py
+```
+
+## Local Usage
+
+Collect source files:
+
+```bash
+python ~/.codex/skills/daily-diary/scripts/collect_inputs.py \
+  --date 2026-06-09 \
+  --out .daily-diary-work/2026-06-09/manifest.jsonl \
+  ~/Downloads/today-notes
+```
+
+Render the final diary:
+
+```bash
+python ~/.codex/skills/daily-diary/scripts/render_diary.py \
+  --data .daily-diary-work/2026-06-09/diary_data.json \
+  --dir ~/Documents/diary
+```
+
+This writes:
+
+```text
+~/Documents/diary/2026-06-09.md
 ```
 
 ## Privacy Model
 
-Daily Diary is designed for personal material, so it treats source files carefully:
+Daily Diary is local-first:
 
 - Original source files are never mutated.
-- The agent confirms language, date, source scope, verification targets, and GitHub destination before writing.
-- Public publishing should be reviewed for private names, locations, screenshots, and sensitive notes.
-- If a diary repo is private, publishing stays private; if it is public, the generated Markdown and assets become public.
-
-## Roadmap Ideas
-
-- Local speech-to-text helper for common audio formats.
-- OCR helper for screenshots and handwritten notes.
-- GitHub Pages starter template for diary archives.
-- Optional encrypted private archive mode.
-- More cover styles and theme presets.
+- The final output is a local Markdown file.
+- The skill does not publish, commit, push, or sync diary entries.
+- The user chooses the local output folder.
+- Private names, locations, screenshots, and sensitive notes can be anonymized before writing.
 
 ## License
 

@@ -1,7 +1,11 @@
+<p align="center">
+  <img src="assets/github-cover.png" alt="Daily Diary Skill cover" width="100%">
+</p>
+
 <h1 align="center">Daily Diary Skill</h1>
 
 <p align="center">
-  Turn scattered daily notes, files, screenshots, and voice memories into one verified local Markdown diary.
+  Voice-faithful local Markdown diaries from scattered notes, files, screenshots, and voice memories.
 </p>
 
 <p align="center">
@@ -24,7 +28,7 @@ The output is intentionally simple:
 YYYY-MM-DD.md
 ```
 
-No GitHub publishing. No cover image. No generated asset bundle. Just one local `.md` diary file for the day.
+No GitHub publishing for diary entries. No diary cover image. No generated diary asset bundle. Just one local `.md` diary file for the day.
 
 ## Defaults
 
@@ -38,7 +42,7 @@ No GitHub publishing. No cover image. No generated asset bundle. Just one local 
 | Fact checking | Weather, current events, names, places, and uncertain claims |
 | Voice fidelity | Preserve the writer's original thoughts, wording, biases, and emotions |
 | Publishing | None |
-| Cover image | None |
+| Diary cover image | None |
 
 ## Workflow
 
@@ -133,6 +137,8 @@ The day arrived in fragments, but by the end it had a shape...
 
 ```text
 daily-diary/
+  assets/
+    github-cover.png
   SKILL.md
   agents/openai.yaml
   references/
